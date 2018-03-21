@@ -1,16 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class TerrainGeneration : MonoBehaviour {
 
-	public GameObject tilePrefab;
-	public Sprite waterSprite;
-	public Sprite grassSprite;
-	public Sprite sandSprite;
-	public Sprite stoneSprite;
+	public TileBase waterSprite;
+	public TileBase grassSprite;
+	public TileBase sandSprite;
+	public TileBase stoneSprite;
 
-	private int size = 400;
+	public Tilemap map;
+
+	private int size = 500;
 	private int seed;
 
 	private float[,] elevation;
@@ -21,11 +23,6 @@ public class TerrainGeneration : MonoBehaviour {
 		elevation = new float[size, size];
 		generateTerrain ();
 		showTerrain ();
-	}
-
-	void createTile(int x, int y, Sprite sprite){
-		GameObject obj = Instantiate (tilePrefab, new Vector3 (x, y, 0f), Quaternion.identity) as GameObject;
-		obj.GetComponent<SpriteRenderer> ().sprite = sprite;
 	}
 
 	void generateTerrain(){
@@ -44,12 +41,12 @@ public class TerrainGeneration : MonoBehaviour {
 	void showTerrain(){
 		for (int y = 0; y < size; y++) {
 			for (int x = 0; x < size; x++) {
-				createTile(x - size/2, y - size/2,biome(elevation[y,x]));
+				map.SetTile (new Vector3Int (x-size/2, y-size/2, 0), biome (elevation [x, y]));
 			}
 		}
 	}
 
-	Sprite biome(float e){
+	TileBase biome(float e){
 		if (e < 0.68)
 			return waterSprite;
 		else if (e < 0.78)
